@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Horeca Scraper</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .input-group { margin: 20px 0; }
+        #urlInput { width: 300px; padding: 8px; }
+        button { padding: 8px 16px; background: #007bff; color: white; border: none; cursor: pointer; }
+        #results { margin-top: 20px; border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .loading { display: none; margin: 20px 0; color: #666; }
+        .error { color: red; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>MisterHoreca Scraper</h1>
+    <div class="input-group">
+        <input type="text" id="baseUrl" placeholder="Enter base URL (e.g., https://www.misterhoreca.be)" style="width: 400px;">
+        <button onclick="runCrawl()">Crawl & Scrape All</button>
+    </div>
+    <div class="input-group">
+        <input type="text" id="urlInput" placeholder="Or enter specific URL">
+        <button onclick="runScrape()">Scrape Single</button>
+    </div>
+    <div class="loading" id="loading">Scraping... Please wait</div>
+    <div class="error" id="error"></div>
+    
+    <table id="results">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Website</th>
+            </tr>
+        </thead>
+        <tbody id="resultsBody"></tbody>
+    </table>
+
+    <script>
+        async function runCrawl() {
+            const baseUrl = document.getElementById('baseUrl').value;
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            
+            if (!baseUrl) {
+                error.textContent = 'Please enter a base URL';
+                return;
+            }
+
+            try {
+                loading.style.display = 'block';
+                error.textContent = '';
+                
+                const response = await fetch('/crawl', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: baseUrl })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const tbody = document.getElementById('resultsBody');
+                    tbody.innerHTML = data.data.map(item => `
+                        <tr>
+                            <td>${item.name}</td>
+                            <td>${item.phone}</td>
+                            <td><a href="mailto:${item.email}">${item.email}</a></td>
+                            <td>${item.address}</td>
+                            <td><a href="${item.website}" target="_blank">${item.website}</a></td>
+                        </tr>
+                    `).join('');
+                } else {
+                    error.textContent = data.error || 'Crawling failed';
+                }
+            } catch (err) {
+                error.textContent = 'Error connecting to server';
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        async function runScrape() {
+            const url = document.getElementById('urlInput').value;
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            
+            if (!url) {
+                error.textContent = 'Please enter a valid URL';
+                return;
+            }
+
+            try {
+                loading.style.display = 'block';
+                error.textContent = '';
+                
+                const response = await fetch('/scrape', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const tbody = document.getElementById('resultsBody');
+                    tbody.innerHTML = `
+                        <tr>
+                            <td>${data.data.name}</td>
+                            <td>${data.data.phone}</td>
+                            <td><a href="mailto:${data.data.email}">${data.data.email}</a></td>
+                            <td>${data.data.address}</td>
+                            <td><a href="${data.data.website}" target="_blank">${data.data.website}</a></td>
+                        </tr>
+                    `;
+                } else {
+                    error.textContent = data.error || 'Scraping failed';
+                }
+            } catch (err) {
+                error.textContent = 'Error connecting to server';
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
