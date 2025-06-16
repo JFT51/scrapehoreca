@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-      "build": "firecrawl build"
+      "build": "vite build"
   },
   "dependencies": {
     "express": "^4.18.2",
