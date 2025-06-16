@@ -4,7 +4,6 @@
   "description": "MisterHoreca contact scraper",
   "main": "server.js",
   "scripts": {
-    "build": "npm run build"
     "start": "node server.js"
   },
   "dependencies": {
