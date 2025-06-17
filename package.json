@@ -2,9 +2,8 @@
   "name": "horeca-scraper",
   "version": "1.0.0",
   "description": "MisterHoreca contact scraper",
-  "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "netlify dev",
     "build": "npx -y firecrawl-mcp build"
   },
   "dependencies": {

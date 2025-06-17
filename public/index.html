@@ -55,7 +55,7 @@
                 loading.style.display = 'block';
                 error.textContent = '';
                 
-                const response = await fetch('/crawl', {
+                const response = await fetch('/.netlify/functions/crawl', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ url: baseUrl })
@@ -98,7 +98,7 @@
                 loading.style.display = 'block';
                 error.textContent = '';
                 
-                const response = await fetch('/scrape', {
+                const response = await fetch('/.netlify/functions/scrape', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ url })
