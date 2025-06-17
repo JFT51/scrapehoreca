@@ -101,7 +101,7 @@ const { execSync } = require('child_process');
 
 async function useMCPTool({ server, tool, params }) {
   try {
-    const cmd = `npx -y firecrawl-mcp --api-key fc-bdc75ba574824359b25b812e64182f8b ${tool} ` + 
+const cmd = `npx -y firecrawl-mcp --api-key ${process.env.FIRECRAWL_API_KEY} ${tool} ` +
       Object.entries(params).map(([k,v]) => `--${k} "${v}"`).join(' ');
       
     const result = execSync(cmd, { encoding: 'utf-8' });

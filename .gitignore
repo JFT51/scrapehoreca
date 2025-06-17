@@ -1,0 +1,4 @@
+node_modules/
+*.log
+# Ignore environment variables file
+.env
